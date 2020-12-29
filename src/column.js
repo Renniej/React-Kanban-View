@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react'
-import {Droppable} from 'react-beautiful-dnd'
+import {Draggable, Droppable} from 'react-beautiful-dnd'
 import styled from "styled-components"
 import Task from "./Task"
 
@@ -10,7 +10,11 @@ const Container = styled.div`
     margin : 8px;
     border : 1px solid lightgrey;
     border-radius : 2px;
+    width  : 220px;
 
+
+    display : flex;
+    flex-direction :  column;
 
 `;
 
@@ -24,6 +28,12 @@ const Title = styled.h3`
 const TaskList = styled.div`
 
     padding: 8px;
+    transition : background-color 0.2s ease;
+    background-color : ${props =>  (props.isDraggingOver ? 'skyblue' : 'white')};
+    flex-grow : 1;
+    min-height  : 100px;
+
+
 
 `;
 
@@ -31,34 +41,43 @@ const TaskList = styled.div`
 export default class column extends Component {
     render() {
         return (
-            <div>
-                <Container>
+           
+
+          
+
+                <Container >
+
+
                 <Title>{this.props.column.columnName}</Title>
                     <Droppable droppableId={this.props.column.id}>
 
 
 
-                              
+                            
 
-                           
-                         {provided =>(<TaskList   ref={provided.innerRef} {...provided.droppableProps}>
-
+                        
+                        {(provided, snapshot) =>(<TaskList  isDraggingOver={snapshot.isDraggingOver}  ref={provided.innerRef} {...provided.droppableProps}>
+                        
                                         {this.props.column.tasks.map((t, index) =>{
 
                                             return (<Task key={t.id}  task={t}  index={index}/>)
 
 
                                         })}
-                                        {provided.placehoder}
-
-                                        </TaskList>)}
+                                        
+                                            {provided.placeholder}
+                                        </TaskList> 
+                                        )}
                             
-                       
-                       
+                    
+                    
 
-                     </Droppable>
+                    </Droppable>
                 </Container>
-            </div>
+
+              
+              
+          
         )
     }
 }

@@ -10,7 +10,7 @@ const Container = styled.div`
         border-radius : 2px;
        
         margin-bottom : 8px;
-        background-color: white;
+        background-color: ${props => (props.isDragging ? 'lightgreen' : 'white')}
 `;
 
 
@@ -22,7 +22,14 @@ export default class Task extends Component {
 
             <Draggable draggableId={this.props.task.id} index={this.props.index}>
 
-                {(provided) =>(<Container {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>{this.props.task.content}</Container>)}
+                {(provided, snapshot) =>(
+                
+                
+                <Container isDragging={snapshot.isDragging} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>{this.props.task.content} {provided.placeholder}</Container>
+                )
+                
+                
+                }
                 
             </Draggable>
         )
