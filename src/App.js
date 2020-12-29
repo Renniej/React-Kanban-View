@@ -67,9 +67,9 @@ export default class App extends Component {
 
   //TODO: Make onDragEnd() code more consistent and readable 
       onDragEnd = result =>{
-          const {destination, source} = result;
+          const {destination, source, type} = result;
 
-
+          
           if (destination === null) 
            return;
 
@@ -86,47 +86,60 @@ export default class App extends Component {
            })
 
 
+
          
-           if (start === finish ){
-            const task = start.tasks[source.index];
-            
-            
-            const newTasks = Array.from(start.tasks);  //creates clone of task located in the column
-            newTasks.splice(source.index, 1); //remove the item located at this index
-            newTasks.splice(destination.index, 0, task); //inserts the task at the destination index (does not delete/remove anything a.k.a everything gets shifted for the added task)
+           if (type === 'column'){
+                const newColumnOrder = Array.from(this.state.columns)
+                const col = newColumnOrder[source.index];
+                
+                newColumnOrder.splice(source.index, 1);
+                newColumnOrder.splice(destination.index,0,col)
+
+                this.setState({...this.state, columns: newColumnOrder})
+           }
+           
+           else{
+
+            if (start === finish ){
+              const task = start.tasks[source.index];
+              
+              
+              const newTasks = Array.from(start.tasks);  //creates clone of task located in the column
+              newTasks.splice(source.index, 1); //remove the item located at this index
+              newTasks.splice(destination.index, 0, task); //inserts the task at the destination index (does not delete/remove anything a.k.a everything gets shifted for the added task)
 
 
 
-            const newColumn = {...start, tasks : newTasks}
+              const newColumn = {...start, tasks : newTasks}
 
-            const newState = {...this.state};
+              const newState = {...this.state};
 
-            newState.columns[this.state.columns.findIndex((col)=>{return col.id === source.droppableId})] = newColumn
+              newState.columns[this.state.columns.findIndex((col)=>{return col.id === source.droppableId})] = newColumn
 
-            this.setState(newState);
-            console.log("New State : " ,newState)
-          }
-          else{
-            const task = start.tasks[source.index];
-            const newStartTasks = Array.from(start.tasks);  
-            const newFinishTasks = Array.from(finish.tasks);  
+              this.setState(newState);
+              console.log("New State : " ,newState)
+            }
+            else{
+              const task = start.tasks[source.index];
+              const newStartTasks = Array.from(start.tasks);  
+              const newFinishTasks = Array.from(finish.tasks);  
 
-            newStartTasks.splice(source.index,1);
-            newFinishTasks.splice(destination.index,0,task);
+              newStartTasks.splice(source.index,1);
+              newFinishTasks.splice(destination.index,0,task);
 
-            const newStartColumn = {...start, tasks: newStartTasks }
-            const newFinishColumn = {...finish, tasks: newFinishTasks }
-            const newState = {...this.state};
+              const newStartColumn = {...start, tasks: newStartTasks }
+              const newFinishColumn = {...finish, tasks: newFinishTasks }
+              const newState = {...this.state};
 
-            newState.columns[this.state.columns.findIndex((col)=>{return col.id === source.droppableId})] = newStartColumn;
-            newState.columns[this.state.columns.findIndex((col)=>{return col.id === destination.droppableId})] = newFinishColumn;
+              newState.columns[this.state.columns.findIndex((col)=>{return col.id === source.droppableId})] = newStartColumn;
+              newState.columns[this.state.columns.findIndex((col)=>{return col.id === destination.droppableId})] = newFinishColumn;
 
-            this.setState(newState)
-            console.log("New State : " ,newState)
+              this.setState(newState)
+              console.log("New State : " ,newState)
         
           }
 
-         
+        }
 
         
       }
@@ -140,25 +153,27 @@ export default class App extends Component {
        <p>Keyboard draggingg : https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/sensors/keyboard.md</p>
        <DragDropContext onDragEnd={this.onDragEnd}>
          
+         <Droppable droppableId="all-columns" direction="horizontal" type="column">
         
-          {   
-           
-              <Container>          
+          {(provided) =>( 
+            <Container {...provided.droppableProps} ref={provided.innerRef}>          
               
               {
                 
-                this.state.columns.map( (col) =>{
+                this.state.columns.map( (col, index) =>{
 
-                  return (<Column key={col.id} column={col}/>)
+                  return (<Column key={col.id} column={col} index={index}/>)
 
                 })
               }
               
-             
-            </Container>
-            }     
+             {provided.placeholder}
+            </Container>)}
            
-        
+             
+                 
+           
+           </Droppable>
        
         </DragDropContext>
      </div>

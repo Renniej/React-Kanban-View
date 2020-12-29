@@ -44,38 +44,41 @@ export default class column extends Component {
            
 
           
+                <Draggable draggableId={this.props.column.id} index={this.props.index}>
 
-                <Container >
-
-
-                <Title>{this.props.column.columnName}</Title>
-                    <Droppable droppableId={this.props.column.id}>
+                    {provided =>( <Container {...provided.draggableProps} ref={provided.innerRef}>
 
 
+        <Title {...provided.dragHandleProps}>{this.props.column.columnName}</Title>
+            <Droppable droppableId={this.props.column.id} type="task">
 
-                            
 
+
+            
+
+        
+        {(provided, snapshot) =>(<TaskList  isDraggingOver={snapshot.isDraggingOver}  ref={provided.innerRef} {...provided.droppableProps}>
+        
+                        {this.props.column.tasks.map((t, index) =>{
+
+                            return (<Task key={t.id}  task={t}  index={index}/>)
+
+
+                        })}
                         
-                        {(provided, snapshot) =>(<TaskList  isDraggingOver={snapshot.isDraggingOver}  ref={provided.innerRef} {...provided.droppableProps}>
-                        
-                                        {this.props.column.tasks.map((t, index) =>{
+                            {provided.placeholder}
+                        </TaskList> 
+                        )}
+            
+    
+    
 
-                                            return (<Task key={t.id}  task={t}  index={index}/>)
+    </Droppable>
+    {provided.placeholder}
+</Container>)}
+               
 
-
-                                        })}
-                                        
-                                            {provided.placeholder}
-                                        </TaskList> 
-                                        )}
-                            
-                    
-                    
-
-                    </Droppable>
-                </Container>
-
-              
+                </Draggable>
               
           
         )
