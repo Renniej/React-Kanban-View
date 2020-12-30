@@ -4,64 +4,104 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid';  //used to create keys 
 import {DragDropContext, Droppable} from 'react-beautiful-dnd'
-
+import {columnsFromBackend} from './data'
 import Column from "./Column";
+import NewSectionBTN from './NewSectionBTN'
 
+
+import toast from "toasted-notes";
+import "toasted-notes/src/styles.css"; // optional styles
 
 const Container = styled.div`
       display : flex;
-
+      align-items : flex-start;
+      background-color: white;
 `
 
-const itemsFromBackend = [
-
-  {id : uuid(), content : 'First Task', date : Date.now()}, 
-
-  {id : uuid(), content : 'Second Task', date : Date.now()},  
-
-  {id : uuid(), content : 'Third Task', date : Date.now()}
-
-
-]
-
-
-const columnsFromBackend =    //mockup data/ placeholder for actual api 
-
- [
-    {
-      id : uuid(),
-      columnName : "Todo",
-      emoji : "💡",
-      tasks : itemsFromBackend
-    },
-
-
-    {
-      id : uuid(),
-      columnName : "In-Progress",
-      emoji : "💡",
-      tasks : []
-    },
-
-    {
-      id : uuid(),
-      columnName : "Finished",
-      emoji : "💡",
-      tasks : []
-    }
- ]
 
 
 
 
+ 
 
+ 
 
 export default class App extends Component {
+
+  
 
 
   constructor(props) {   
     super(props);    
+
+ 
     this.state = {columns: columnsFromBackend};  
+    this.addNewColumn = this.addNewColumn.bind(this);
+    this.addNewTask = this.addNewTask.bind(this);
+  }
+
+  addNewTask(task, col_id){
+
+    //TODO: Add error checking to adding tasks
+    
+
+    if (task.title){
+      const newColumns = [...this.state.columns];
+
+      const col = newColumns.find(col => {return col.id === col_id});
+
+
+      console.log("Task",task)
+      col.tasks.push(task);
+      console.log("TASKS",col.tasks)
+
+
+      this.setState(prevState =>{
+        return{
+            ...prevState,
+            columns : newColumns
+        }
+   })
+  }
+  else{
+    toast.notify("The task name can not be empty", {duration: 1500})
+  }
+    
+
+
+
+
+
+
+  }
+
+
+  addNewColumn(name){
+    
+   
+    
+    
+    if (name){
+      const newColumns = [...this.state.columns]
+
+
+      newColumns.push(
+        {
+          id : uuid(),
+          columnName : name,
+          emoji : "💡",
+          tasks : []
+        }
+
+      )
+
+
+      this.setState({...this.state, columns:newColumns });
+    }else{
+
+      toast.notify("The section name can not be empty", {duration: 1500})
+     
+    }
   }
 
 
@@ -148,9 +188,9 @@ export default class App extends Component {
   render() {
 
     return (
-    
-     <div>     
-       <p>Keyboard draggingg : https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/sensors/keyboard.md</p>
+      
+      <Container>     
+      
        <DragDropContext onDragEnd={this.onDragEnd}>
          
          <Droppable droppableId="all-columns" direction="horizontal" type="column">
@@ -162,11 +202,13 @@ export default class App extends Component {
                 
                 this.state.columns.map( (col, index) =>{
 
-                  return (<Column key={col.id} column={col} index={index}/>)
+                  return (<Column key={col.id} column={col} index={index} addNewTask={this.addNewTask}/>)
 
                 })
               }
               
+               
+
              {provided.placeholder}
             </Container>)}
            
@@ -174,9 +216,15 @@ export default class App extends Component {
                  
            
            </Droppable>
-       
+
+          
+           
         </DragDropContext>
-     </div>
+
+        <NewSectionBTN addNewColumn={this.addNewColumn}/>
+        </Container>
+       
+     
  
     )
   }
