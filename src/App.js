@@ -4,7 +4,12 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid';  //used to create keys 
 import {DragDropContext, Droppable} from 'react-beautiful-dnd'
-import {columnsFromBackend} from './data'
+
+
+import * as dataService from './dataService'
+
+
+
 import Column from "./Column";
 import NewSectionBTN from './NewSectionBTN'
 
@@ -35,9 +40,49 @@ export default class App extends Component {
     super(props);    
 
  
-    this.state = {columns: columnsFromBackend};  
+    this.state = {project: dataService.getFullProject("uniqueProject1")};
+
     this.addNewColumn = this.addNewColumn.bind(this);
     this.addNewTask = this.addNewTask.bind(this);
+
+    this.deleteTask = this.deleteTask.bind(this);
+    this.deleteColumn = this.deleteColumn.bind(this);
+    this.renameColumn = this.renameColumn.bind(this);
+
+    this.onDragEnd = this.onDragEnd.bind(this);
+
+   
+  }
+
+//TOD: add logic for error cases
+  deleteTask(task_id,col_id){
+    /*
+    console.log("TEST")
+    const newColumns = [...this.state.columns];
+
+    const col = newColumns.find(col => {return col.id === col_id});
+
+    const newTasks = Array.from(col.tasks);
+
+    delete newTasks[ (newTasks.findIndex(task => { return task.id === task_id}) )   ] ;
+
+    col.tasks = newTasks;
+
+    this.setState({...this.state, columns : newColumns })
+    */
+  }
+
+//TOD: add logic for error cases
+  deleteColumn(col_id){
+
+  /*
+    const newColumns = [...this.state.columns];
+    const index = newColumns.findIndex(col => {return col.id === col_id});
+    newColumns.splice(index, 1);
+
+
+    this.setState({...this.state, columns : newColumns })
+    */
   }
 
   addNewTask(task, col_id){
@@ -74,6 +119,24 @@ export default class App extends Component {
 
 
   }
+
+
+
+  
+  renameColumn = (name, col_id) =>{
+
+    const newColumns = [...this.state];
+    const index = newColumns.findIndex(col => {return col.id === col_id});
+    
+    if (!name)
+          toast.notify("Column name can not be empty")
+    else{
+      newColumns[index].columnName = name;
+
+
+        this.setState({...this.state, columns : newColumns});
+    }
+}
 
 
   addNewColumn(name){
@@ -200,9 +263,9 @@ export default class App extends Component {
               
               {
                 
-                this.state.columns.map( (col, index) =>{
+                this.state.project.columns.map( (col, index) =>{
 
-                  return (<Column key={col.id} column={col} index={index} addNewTask={this.addNewTask}/>)
+                  return (<Column deleteColumn={this.deleteColumn}  renameColumn={this.renameColumn} deleteTask={this.deleteTask} key={col.id} column={col} index={index} addNewTask={this.addNewTask}/>)
 
                 })
               }
