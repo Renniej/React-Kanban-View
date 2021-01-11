@@ -74,8 +74,13 @@ const backend_projects = [
    name : "Atomic Habits",
     group : "uniqueGroup2",
     columns : []
-  }
-    
+  },
+
+  { id : "uniqueProjec5",
+  name : "Testing Solo List",
+   group : "nonGrouped",
+   columns : []
+ }
 
 ]
   
@@ -83,13 +88,21 @@ const backend_projects = [
 
 const backend_projectGroups = [
 
+
+  
     {
       id: "uniqueGroup1",
      name: "School"
     },
 
     {id : "uniqueGroup2",
-     name : "Personal"}
+     name : "Personal"},
+
+     {
+      id: "nonGrouped",
+      name: "For projects that dont have groups"
+    }
+
   
 ]
 
@@ -97,24 +110,33 @@ const backend_projectGroups = [
 export function getProjectGroup(group_id){
 
   var group = {...backend_projectGroups.find(group => {return group.id === group_id})}
-  
   return group;
 
 }
 
 
+export function renameColumn(col_id, name){
+
+
+  var column = {...backend_columns.find(col => {return col.id === col_id})}
+  column.name = name;
+
+  return true;
+
+
+}
+
 export function getProject(proj_id){
 
+  
       var project = {...backend_projects.find(proj => {return proj.id == proj_id})};
-
       return project;
-
 }
 
 
 export function getColumn(col_id){
 
-    var column = {...backend_projectGroups.find(col => {return col.id === col_id})}
+    var column = {...backend_columns.find(col => {return col.id === col_id})}
     return column;
 
 }
@@ -130,34 +152,97 @@ export function getTasks(task_id){
 export function getFullProject(proj_id){
 
       var project = getProject(proj_id);
-   
-
-
+      
+     
       if (project === undefined)
         return;
 
 
-      project.columns.map(col_id, c_index =>{
+      project.columns.map( (col_id, c_index) =>{
 
-        project.columns[c_index] = getColumn(col_id);
+        var column =  getColumn(col_id);
 
-        project.columns[c_index].tasks.map(task_id, t_index=>{
+        if (column.tasks.length > 0){
+          column.tasks.map( (task_id, t_index)=>{
 
-            project.columns[c_index].tasks[t_index] = getTasks(task_id);
+            column.tasks[t_index] = getTasks(task_id);
 
-        })
+          })
+      }
 
+      project.columns[c_index] = column;
+        
 
-        return project;
-
+      
 })
 
 
     
 
 
-       
+return project;
+ 
 
 
   
+}
+
+
+
+export function getEmptyProject(){
+
+
+  return {
+      id : "empty",
+      name : "test",
+      group : null,
+      columns : []
+
+  }
+}
+
+
+export function getAllProjects(){
+        return backend_projects;
+}
+
+
+export function getAllProjectsWithGroups(){
+
+    var projectGroup = [];
+
+
+    backend_projectGroups.forEach(group => projectGroup.push({...group}))
+
+    projectGroup.forEach(group => {
+
+        group.projects = backend_projects.filter(project => project.group === group.id)
+
+    })
+
+  
+
+
+    return projectGroup;
+
+}
+
+
+export function getNumOfTasks(proj_id){
+
+  var tasks = 0;
+  var project = {...backend_projects.find(proj => {return proj.id === proj_id})}
+
+
+    project.columns.forEach(col_id =>{
+
+        var col = getColumn(col_id);
+       
+        tasks += col.tasks.length;
+       
+    })
+
+    return tasks
+
+
 }
