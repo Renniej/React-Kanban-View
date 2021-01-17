@@ -1,4 +1,4 @@
-[](https://gph.is/g/ZnNkY9P)
+[](https://media.giphy.com/media/L6K6ePCyEELgLuM08T/source.gif)
 
 # Getting Started with Create React App
 
