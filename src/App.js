@@ -1,5 +1,5 @@
-import Kanban from './Kanban';
-import Sidebar from './Sidebar'
+import Kanban from './Kanban-component/Kanban';
+import Sidebar from './Sidebar-component/Sidebar'
 
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 

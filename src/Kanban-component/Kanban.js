@@ -1,5 +1,5 @@
 
-import './App.css';
+
 import React, { Component } from 'react'
 import { withRouter } from 'react-router'
 import styled from 'styled-components'
@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';  //used to create keys
 import {DragDropContext, Droppable} from 'react-beautiful-dnd'
 
 
-import * as dataService from './dataService'
+import * as dataService from '../dataService'
 
 
 
