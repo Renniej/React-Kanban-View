@@ -1,6 +1,7 @@
 
 import './App.css';
 import React, { Component } from 'react'
+import { withRouter } from 'react-router'
 import styled from 'styled-components'
 import { v4 as uuid } from 'uuid';  //used to create keys 
 import {DragDropContext, Droppable} from 'react-beautiful-dnd'
@@ -31,7 +32,7 @@ const Container = styled.div`
 
  
 
-export default class Kanban extends Component {
+ class Kanban extends Component {
 
   
 
@@ -39,8 +40,8 @@ export default class Kanban extends Component {
   constructor(props) {   
     super(props);    
 
- 
-    this.state = {project: dataService.getEmptyProject()};
+    console.log(this.props.location.pathname)
+    this.state = {proj_id :this.props.match.params.projId, project: dataService.getEmptyProject()};
 
     this.addNewColumn = this.addNewColumn.bind(this);
     this.addNewTask = this.addNewTask.bind(this);
@@ -56,10 +57,13 @@ export default class Kanban extends Component {
 
 
   componentDidMount(){
-
-    this.setState({...this.state, project: dataService.getFullProject("uniqueProject1")})
+    this.setState({...this.state, proj_id :this.props.match.params.projId,  project: dataService.getFullProject(this.state.proj_id)})
   }
 
+
+
+
+  
 //TOD: add logic for error cases
   deleteTask(task_id,col_id){
     
@@ -321,3 +325,6 @@ export default class Kanban extends Component {
     )
   }
 }
+
+
+export default withRouter(Kanban);

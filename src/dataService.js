@@ -59,14 +59,14 @@ const backend_projects = [
       id : "uniqueProject2",
       name : "BTP600",
       group : "uniqueGroup1",
-      columns : []
+      columns : ["col2"]
   },
 
   {
     id : "uniqueProject3",
     name : "BTN530",
     group : "uniqueGroup1",
-    columns : []
+    columns : ["col3"]
   },
 
 
@@ -129,15 +129,13 @@ export function renameColumn(col_id, name){
 export function getProject(proj_id){
 
   
-      var project = {...backend_projects.find(proj => {return proj.id == proj_id})};
-      return project;
+     
+      return  {...backend_projects.find(proj => {return proj.id == proj_id})}
 }
 
 
 export function getColumn(col_id){
-
-    var column = {...backend_columns.find(col => {return col.id === col_id})}
-    return column;
+    return backend_columns.find(col => {return col.id === col_id});
 
 }
 
