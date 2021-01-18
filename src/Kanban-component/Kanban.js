@@ -3,7 +3,7 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router'
 import styled from 'styled-components'
-import { v4 as uuid } from 'uuid';  //used to create keys 
+import { v4 as uuid } from 'uuid';  //used to create keys
 import {DragDropContext, Droppable} from 'react-beautiful-dnd'
 
 
@@ -25,20 +25,28 @@ const Container = styled.div`
 `
 
 
+const onSubmit = (data) =>{
+     fetch('http://127.0.0.1:5000/projects', {
+       method: 'POST',
+       headers: {'Content-type': 'application/json',},
+       body: JSON.stringify(data),
+     })
+    console.log(data);
+}
 
 
 
- 
 
- 
+
+
 
  class Kanban extends Component {
 
-  
 
 
-  constructor(props) {   
-    super(props);    
+
+  constructor(props) {
+    super(props);
 
     console.log(this.props.location.pathname)
     this.state = {proj_id :this.props.match.params.projId, project: dataService.getEmptyProject()};
@@ -58,16 +66,17 @@ const Container = styled.div`
 
   componentDidMount(){
     this.setState({...this.state, proj_id :this.props.match.params.projId,  project: dataService.getFullProject(this.state.proj_id)})
+    onSubmit(this)
   }
 
 
 
 
-  
+
 //TOD: add logic for error cases
   deleteTask(task_id,col_id){
-    
-  
+
+
     const newColumns = [...this.state.project.columns];
 
     const col = newColumns.find(col => {return col.id === col_id});
@@ -79,7 +88,7 @@ const Container = styled.div`
     col.tasks = newTasks;
 
     this.setState({...this.state, project : {...this.state.project, columns : newColumns }})
-    
+
   }
 
 
@@ -87,20 +96,20 @@ const Container = styled.div`
 //TOD: add logic for error cases
   deleteColumn(col_id){
 
-  
+
     const newColumns = [...this.state.project.columns];
     const index = newColumns.findIndex(col => {return col.id === col_id});
     newColumns.splice(index, 1);
 
 
     this.setState({...this.state, project: {...this.state.project , columns : newColumns }})
-    
+
   }
 
   addNewTask(task, col_id){
 
     //TODO: Add error checking to adding tasks
-    
+
 
     if (task.title){
       const newColumns = [...this.state.project.columns];
@@ -108,9 +117,9 @@ const Container = styled.div`
       const col = {...newColumns.find(col => {return col.id === col_id})};
 
 
-    
+
       col.tasks.push(task);
-      
+
 
 
       this.setState(prevState =>{
@@ -123,7 +132,7 @@ const Container = styled.div`
   else{
     toast.notify("The task name can not be empty", {duration: 1500})
   }
-    
+
 
 
 
@@ -134,7 +143,7 @@ const Container = styled.div`
 
 
 
-  
+
   renameColumn = (name, col_id) =>{
 
 
@@ -142,7 +151,7 @@ const Container = styled.div`
     if (dataService.renameColumn(col_id, name) ){
       const newColumns = [...this.state.project.columns];
       const index = newColumns.findIndex(col => {return col.id === col_id});
-      
+
       if (!name)
             toast.notify("Column name can not be empty")
       else{
@@ -160,8 +169,8 @@ const Container = styled.div`
 }
 
 
-  addNewColumn(name){  
-    
+  addNewColumn(name){
+
     if (name){
       const newColumns = [...this.state.project.columns]
 
@@ -181,7 +190,7 @@ const Container = styled.div`
     }else{
 
       toast.notify("The section name can not be empty", {duration: 1500})
-     
+
     }
   }
 
@@ -191,7 +200,7 @@ const Container = styled.div`
   onDragEnd_Column(source, destination){
     const newColumnOrder = Array.from(this.state.project.columns)
     const col = newColumnOrder[source.index];
-    
+
     newColumnOrder.splice(source.index, 1);
     newColumnOrder.splice(destination.index,0,col)
 
@@ -203,11 +212,11 @@ const Container = styled.div`
   //@param start : 1st column
   //@param finish : 2nd column
   onDragEnd_Task(start, finish, source, destination){ //For god sakes, clean this function up later ()
-   
+
     if (start === finish ){
       const task = start.tasks[source.index];
-      
-      
+
+
       const newTasks = Array.from(start.tasks);  //creates clone of task located in the column
       newTasks.splice(source.index, 1); //remove the item located at this index
       newTasks.splice(destination.index, 0, task); //inserts the task at the destination index (does not delete/remove anything a.k.a everything gets shifted for the added task)
@@ -225,8 +234,8 @@ const Container = styled.div`
     }
     else{
       const task = start.tasks[source.index];
-      const newStartTasks = Array.from(start.tasks);  
-      const newFinishTasks = Array.from(finish.tasks);  
+      const newStartTasks = Array.from(start.tasks);
+      const newFinishTasks = Array.from(finish.tasks);
 
       newStartTasks.splice(source.index,1);
       newFinishTasks.splice(destination.index,0,task);
@@ -245,12 +254,12 @@ const Container = styled.div`
   }
 
 
-  //TODO: Make onDragEnd() code more consistent and readable 
+  //TODO: Make onDragEnd() code more consistent and readable
       onDragEnd = result =>{
           const {destination, source, type} = result;
 
-          
-          if (destination === null) 
+
+          if (destination === null)
            return;
 
           if (destination.droppableId === source.droppableId && destination.index === source.index)
@@ -267,61 +276,61 @@ const Container = styled.div`
 
 
 
-         
+
           if (type === 'column'){
               this.onDragEnd_Column(source,destination)
           }
-           
+
           else {
             this.onDragEnd_Task(start,finish,source,destination)
 
           }
 
-        
+
       }
 
 
   render() {
 
     return (
-      
-      <Container>     
-      
+
+      <Container>
+
        <DragDropContext onDragEnd={this.onDragEnd}>
-         
+
          <Droppable droppableId="all-columns" direction="horizontal" type="column">
-        
-          {(provided) =>( 
-            <Container {...provided.droppableProps} ref={provided.innerRef}>          
-              
+
+          {(provided) =>(
+            <Container {...provided.droppableProps} ref={provided.innerRef}>
+
               {
-                
+
                 this.state.project.columns.map( (col, index) =>{
 
                   return (<Column deleteColumn={this.deleteColumn}  renameColumn={this.renameColumn} deleteTask={this.deleteTask} key={col.id} column={col} index={index} addNewTask={this.addNewTask}/>)
 
                 })
               }
-              
-               
+
+
 
              {provided.placeholder}
             </Container>)}
-           
-             
-                 
-           
+
+
+
+
            </Droppable>
 
-          
-           
+
+
         </DragDropContext>
 
         <NewSectionBTN addNewColumn={this.addNewColumn}/>
         </Container>
-       
-     
- 
+
+
+
     )
   }
 }
