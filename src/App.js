@@ -12,7 +12,7 @@ export default function App() {
             <Router>
                 <Sidebar/>
 
-                    <Switch>
+                    <Switch>  
 
                     <Route path="/projects/:projId" render={(props) => (
                             <Kanban key={props.match.params.projId} {...props} />)
