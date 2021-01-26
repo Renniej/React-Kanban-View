@@ -26,6 +26,7 @@ export function getSidebarData(){
 
                         projectItems.push({
                             title : proj.name,
+                            id : proj.id + "Sidebar_Item",
                             path : `/projects/` + proj.id,
                             icon :  <BsIcons.BsList/>,
                             taskNum : dataService.getNumOfTasks(proj.id)
@@ -45,6 +46,7 @@ export function getSidebarData(){
 
                         sidebarData.push({
                             title : group.name,
+                            id : group.id + "Sidebar_Item",
                             path : `/groups/`  + group.id,
                             icon : <AiIcons.AiFillFolder/>,
                             iconClosed :<IoIcons.IoIosArrowUp/>,

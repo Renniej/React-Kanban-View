@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-
+import {DragDropContext, Droppable} from 'react-beautiful-dnd'
 
 
 import {Link} from 'react-router-dom'
@@ -11,6 +11,7 @@ import * as AiIcons from 'react-icons/ai'
 
 import * as SidebarData from   "./SidebarData"
 import SubMenu from "./SubMenu"
+import MenuItem from "./MenuItem"
 
 const Nav = styled.div`
   background: #15171c;
@@ -62,29 +63,38 @@ export default class Sidebar extends Component {
 
     render() {
         return (
-            <>
-             <Nav>
-                <NavIcon to='#'>
-                    <FaIcons.FaBars onClick={this.showSidebar}/>
-                </NavIcon>
-             </Nav>
+            <DragDropContext>
+                <Droppable droppableId="Sidebar" diirection="horzontal" type="Sidebar">
 
-            <SidebarNav sidebar={this.state.sidebar}>
-                <SidebarWrap>
-                    <NavIcon to='#'>
-                        <AiIcons.AiOutlineClose onClick={this.showSidebar}/>
-                    </NavIcon>
+                    {(provided,snapshot)=>( 
+                        <>
+                        <Nav>
+                            <NavIcon to='#'>
+                                <FaIcons.FaBars onClick={this.showSidebar}/>
+                            </NavIcon>
+                        </Nav>
+
+                        <SidebarNav sidebar={this.state.sidebar} ref={provided.innerRef} {...provided.droppableProps}>
+
+                            <SidebarWrap>
+                                <NavIcon to='#'>
+                                    <AiIcons.AiOutlineClose onClick={this.showSidebar}/>
+                                </NavIcon>
 
 
-                    {this.state.data.map((item,index)=>{
-                        return <SubMenu item={item} key={index}/>
-                    })}
+                                {this.state.data.map((item,index)=>{
+                                    return <MenuItem item={item} key={index} index={index}/>
+                                })}
 
 
-                </SidebarWrap>
-            </SidebarNav>
+                            </SidebarWrap>
 
-          </>
+                        </SidebarNav>
+                    </>)}
+                   
+
+                </Droppable>
+          </DragDropContext>
         )
     }
 }
