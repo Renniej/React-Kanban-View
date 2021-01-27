@@ -74,21 +74,31 @@ export default class Sidebar extends Component {
                             </NavIcon>
                         </Nav>
 
-                        <SidebarNav sidebar={this.state.sidebar} ref={provided.innerRef} {...provided.droppableProps}>
+                        <SidebarNav sidebar={this.state.sidebar} >
 
-                            <SidebarWrap>
+                            <SidebarWrap ref={provided.innerRef} {...provided.droppableProps}>
                                 <NavIcon to='#'>
                                     <AiIcons.AiOutlineClose onClick={this.showSidebar}/>
                                 </NavIcon>
 
 
                                 {this.state.data.map((item,index)=>{
-                                    return <MenuItem item={item} key={index} index={index}/>
+
+                                    if (item.subNav){  //If the item set is a group of objects a.k.a has a subNav then create a seperate sub menu for it (SubMenu is also a droppable)
+
+                                          return (
+                                        
+                                            <SubMenu item={item} key={item.id} index={index}/>
+                                            
+                                          )
+                                          
+                                    }
+                                        return <MenuItem item={item} key={item.id} index={index}/>
                                 })}
 
 
                             </SidebarWrap>
-
+                         
                         </SidebarNav>
                     </>)}
                    

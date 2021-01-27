@@ -1,9 +1,11 @@
+
 import React, { Component } from 'react'
-import {Draggable} from 'react-beautiful-dnd'
+import {Draggable, Droppable} from 'react-beautiful-dnd'
 import {Link} from 'react-router-dom'
 import styled from 'styled-components'
 
-const SidebarLink = styled(Link)`
+import MenuItem from './MenuItem'
+const SubMenuWrap = styled.div`
   display: flex;
   color: #e1e9fc;
   justify-content: space-between;
@@ -57,7 +59,7 @@ export default class SubMenu extends Component {
 
             {(provided,snapshot) => (    
               <div {...provided.dragHandleProps} {...provided.draggableProps} ref={provided.innerRef}>
-                <SidebarLink to={this.props.item.path} onClick={this.props.item.subNav && this.showSidebar}  >
+                <SubMenuWrap  onClick={this.props.item.subNav && this.showSidebar}  >
                     <div>
                         {this.props.item.icon}
                         <SidebarLabel>{this.props.item.title} - {this.props.item.taskNum}</SidebarLabel>
@@ -68,19 +70,32 @@ export default class SubMenu extends Component {
                         ? this.props.item.iconOpened
                         : this.props.item.subNav
                         ? this.props.item.iconClosed : null}
-                      
                     </div>
-                </SidebarLink>
 
-                          {this.state.subnavOpen && this.props.item.subNav.map((item,index)=>{
+                </SubMenuWrap>
+                  
+                  <Droppable droppableId={this.props.item.id}  type="SubMenu-SubNav">
 
-                            return (
-                                <DropdownWrap to={item.path} key={index}>
-                                  <SubMenu item={item} key={index}/>
-                                </DropdownWrap>
-                            )
+                            {(provided, snapshot)=>( 
+                              <div ref={provided.innerRef} {...provided.droppableProps}>
+                              
+                                {this.state.subnavOpen && this.props.item.subNav.map((item,index)=>{
 
-                          })}
+                                return (
+                                    <DropdownWrap>
+                                      <MenuItem item={item} key={item.id} index={index}/>
+                                    </DropdownWrap>
+                                )
+
+                                })}
+                                
+                              </div> 
+                            )}
+
+                       
+                  </Droppable>
+
+
               </div>
             )}
            
