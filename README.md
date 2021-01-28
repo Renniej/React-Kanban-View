@@ -1,3 +1,5 @@
+Main Purpose:  Learning the react-dnd-beautiful library was a bit more complex then expected so before implementing into my main project I used this creation for practice. 
+
 ![](https://media.giphy.com/media/L6K6ePCyEELgLuM08T/source.gif)
 
 # Getting Started with Create React App
