@@ -305,7 +305,7 @@ const Container = styled.div`
               
                
 
-             {provided.placeholder}
+              {provided.placeholder}
             </Container>)}
            
              

@@ -46,7 +46,7 @@ export default class SubMenu extends Component {
 
     constructor(props){
         super(props)
-        this.state = {subnavOpen : false}
+        this.state = {subnavOpen : true}
     }
 
     showSidebar = () => {this.setState({...this.state, subnavOpen : !this.state.subnavOpen})}
@@ -54,12 +54,12 @@ export default class SubMenu extends Component {
     render() {
         return (
 
-
           <Draggable draggableId={this.props.item.id} index={this.props.index}>
 
             {(provided,snapshot) => (    
               <div {...provided.dragHandleProps} {...provided.draggableProps} ref={provided.innerRef}>
-                <SubMenuWrap  onClick={this.props.item.subNav && this.showSidebar}  >
+                
+                <SubMenuWrap  onClick={this.props.item.subNav && this.showSidebar}>
                     <div>
                         {this.props.item.icon}
                         <SidebarLabel>{this.props.item.title} - {this.props.item.taskNum}</SidebarLabel>
@@ -73,27 +73,29 @@ export default class SubMenu extends Component {
                     </div>
 
                 </SubMenuWrap>
-                  
-                  <Droppable droppableId={this.props.item.id}  type="SubMenu-SubNav">
-
-                            {(provided, snapshot)=>( 
-                              <div ref={provided.innerRef} {...provided.droppableProps}>
+                
                               
-                                {this.state.subnavOpen && this.props.item.subNav.map((item,index)=>{
-
-                                return (
-                                    <DropdownWrap>
-                                      <MenuItem item={item} key={item.id} index={index}/>
-                                    </DropdownWrap>
-                                )
-
-                                })}
-                                
-                              </div> 
-                            )}
-
-                       
-                  </Droppable>
+       
+                              
+                            
+                                  {this.state.subnavOpen ? (
+                                    
+                                    <Droppable droppableId={this.props.item.id}>
+                                      {(provided,snapshot)=>( 
+                                      <div  {...provided.droppableProps} ref={provided.innerRef}>
+                                          {this.props.item.subNav.map((item,index) => 
+                                        (
+                                         
+                                            <MenuItem item={item} key={item.id} index={index} isSubItem={true}/>
+                                          
+                                       ))}
+                                        {provided.placeholder}
+                                      </div>)}
+                                   
+                                    </Droppable>
+                                  ) : null}
+           
+               
 
 
               </div>

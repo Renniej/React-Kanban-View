@@ -60,19 +60,78 @@ export default class Sidebar extends Component {
 
     showSidebar = () => {this.setState({...this.state, sidebar : !this.state.sidebar})}
 
+    onDragEnd = result =>{
+        
+        const {destination, source, type} = result;
+
+        if (destination === null) //If destination does not exist exit (User did not drop object in approp. space)
+        return;
+
+        //if desintation and source the same  AND indexs are the same then exit (User is trying to put object in original spot)
+       if (destination.droppableId === source.droppableId && destination.index === source.index)
+        return;
+
+
+        if (destination.droppableId != source.droppableId)
+            this.onDragEnd_edge1(destination, source,type);
+        else
+            this.onDragEnd_base(destination, source,type);
+
+    }
+
+    //when an project is dragged outside of a sub-menu
+    onDragEnd_edge1 = (destination, source,type) =>{
+
+        const newData = [...this.state.data]
+        const newProjectGroup = {...newData.find((item)=>{return source.droppableId === item.id})}
+        const newSubNav = [...newProjectGroup.subNav]
+
+
+        const project = {...newSubNav[source.index]}
+
+
+        newSubNav.splice(source.index,1);
+        newData.splice(destination.index,0,project);
+
+        newProjectGroup.subNav = newSubNav
+        
+        newData[newData.findIndex(item =>{ return source.droppableId === item.id})] = newProjectGroup
+      
+
+        this.setState({...this.state, data : newData});
+
+      
+    }
+
+    //when a project/project group is switching places on sidebar
+    onDragEnd_base = (destination,source, type)=>{
+
+        const newData = [...this.state.data]
+
+        const item = newData[source.index]
+     
+
+        newData.splice(source.index,1); //removes dragged item from array
+        newData.splice(destination.index,0,item); //adds dragged item to array at the spot it was dropped
+
+        this.setState({...this.state, data: newData});
+
+        
+    }
 
     render() {
         return (
-            <DragDropContext>
-                <Droppable droppableId="Sidebar" diirection="horzontal" type="Sidebar">
-
-                    {(provided,snapshot)=>( 
-                        <>
+            <DragDropContext onDragEnd={this.onDragEnd}> 
                         <Nav>
                             <NavIcon to='#'>
                                 <FaIcons.FaBars onClick={this.showSidebar}/>
                             </NavIcon>
                         </Nav>
+
+                <Droppable droppableId="Sidebar" diirection="horzontal" >
+
+                    {(provided,snapshot)=>( 
+                        <>
 
                         <SidebarNav sidebar={this.state.sidebar} >
 
@@ -82,21 +141,22 @@ export default class Sidebar extends Component {
                                 </NavIcon>
 
 
+
                                 {this.state.data.map((item,index)=>{
+
+
 
                                     if (item.subNav){  //If the item set is a group of objects a.k.a has a subNav then create a seperate sub menu for it (SubMenu is also a droppable)
 
                                           return (
-                                        
                                             <SubMenu item={item} key={item.id} index={index}/>
-                                            
                                           )
                                           
                                     }
                                         return <MenuItem item={item} key={item.id} index={index}/>
                                 })}
 
-
+                                {provided.placeholder}
                             </SidebarWrap>
                          
                         </SidebarNav>
