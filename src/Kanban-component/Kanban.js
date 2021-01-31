@@ -43,16 +43,6 @@ const Container = styled.div`
     console.log(this.props.location.pathname)
     this.state = {proj_id :this.props.match.params.projId, project: dataService.getEmptyProject()};
 
-    this.addNewColumn = this.addNewColumn.bind(this);
-    this.addNewTask = this.addNewTask.bind(this);
-
-    this.deleteTask = this.deleteTask.bind(this);
-    this.deleteColumn = this.deleteColumn.bind(this);
-    this.renameColumn = this.renameColumn.bind(this);
-
-    this.onDragEnd = this.onDragEnd.bind(this);
-    this.onDragEnd_Column = this.onDragEnd_Column.bind(this)
-    this.onDragEnd_Task = this.onDragEnd_Task.bind(this)
   }
 
 
@@ -65,7 +55,7 @@ const Container = styled.div`
 
   
 //TOD: add logic for error cases
-  deleteTask(task_id,col_id){
+  deleteTask = (task_id,col_id) =>{
     
   
     const newColumns = [...this.state.project.columns];
@@ -85,7 +75,7 @@ const Container = styled.div`
 
 
 //TOD: add logic for error cases
-  deleteColumn(col_id){
+  deleteColumn = col_id => {
 
   
     const newColumns = [...this.state.project.columns];
@@ -97,7 +87,7 @@ const Container = styled.div`
     
   }
 
-  addNewTask(task, col_id){
+  addNewTask = (task, col_id) =>{
 
     //TODO: Add error checking to adding tasks
     
@@ -160,7 +150,7 @@ const Container = styled.div`
 }
 
 
-  addNewColumn(name){  
+  addNewColumn = name =>{  
     
     if (name){
       const newColumns = [...this.state.project.columns]
@@ -188,7 +178,7 @@ const Container = styled.div`
 
 
 
-  onDragEnd_Column(source, destination){
+  onDragEnd_Column = (source, destination) => {
     const newColumnOrder = Array.from(this.state.project.columns)
     const col = newColumnOrder[source.index];
     
@@ -202,7 +192,7 @@ const Container = styled.div`
 
   //@param start : 1st column
   //@param finish : 2nd column
-  onDragEnd_Task(start, finish, source, destination){ //For god sakes, clean this function up later ()
+  onDragEnd_Task = (start, finish, source, destination) =>{ //For god sakes, clean this function up later ()
    
     if (start === finish ){
       const task = start.tasks[source.index];
